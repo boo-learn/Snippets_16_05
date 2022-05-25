@@ -1,5 +1,5 @@
 from django.http import Http404
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from MainApp.models import Snippet
 from MainApp.forms import SnippetForm
 
@@ -14,7 +14,7 @@ def add_snippet_page(request):
         form = SnippetForm()
         context = {'pagename': 'Добавление нового сниппета', "form": form}
         return render(request, 'pages/add_snippet.html', context)
-    if request.method == "POST": # информацию от формы
+    if request.method == "POST":  # информацию от формы
         form = SnippetForm(request.POST)
         if form.is_valid():
             form.save()
@@ -28,3 +28,12 @@ def snippets_page(request):
         "snippets": snippets
     }
     return render(request, 'pages/view_snippets.html', context)
+
+
+def snippet_detail(request, id):
+    snippet = get_object_or_404(Snippet, id=id)
+    context = {
+        'pagename': 'Подробнее о сниппете',
+        "snippet": snippet
+    }
+    return render(request, 'pages/snippet_detail.html', context)
