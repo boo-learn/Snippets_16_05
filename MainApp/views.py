@@ -2,7 +2,7 @@ from django.http import Http404
 from django.contrib import auth
 from django.shortcuts import render, redirect, get_object_or_404
 from MainApp.models import Snippet
-from MainApp.forms import SnippetForm, UserRegistrationForm
+from MainApp.forms import SnippetForm, UserRegistrationForm, CommentForm
 
 
 def index_page(request):
@@ -35,9 +35,11 @@ def snippets_page(request):
 
 def snippet_detail(request, id):
     snippet = get_object_or_404(Snippet, id=id)
+    form = CommentForm()
     context = {
         'pagename': 'Подробнее о сниппете',
-        "snippet": snippet
+        "snippet": snippet,
+        "form": form
     }
     return render(request, 'pages/snippet_detail.html', context)
 
@@ -72,3 +74,11 @@ def register(request):
             return redirect("home")
         context = {'pagename': 'Регистрация пользователя', "form": form}
         return render(request, 'pages/registration.html', context)
+
+
+def comment_add(request):
+    if request.method == "POST":
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect(request.META.get('HTTP_REFERER', '/'))
