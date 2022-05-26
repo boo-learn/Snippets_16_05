@@ -79,6 +79,12 @@ def register(request):
 def comment_add(request):
     if request.method == "POST":
         form = CommentForm(request.POST)
+        snippet_id = request.POST.get("snippet_id")
         if form.is_valid():
-            form.save()
+            comment = form.save(commit=False)
+            comment.author = request.user
+            comment.snippet = Snippet.objects.get(id=snippet_id)
+            comment.save()
             return redirect(request.META.get('HTTP_REFERER', '/'))
+
+    raise Http404
