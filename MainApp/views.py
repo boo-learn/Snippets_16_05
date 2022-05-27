@@ -24,6 +24,12 @@ def add_snippet_page(request):
             return redirect("snippets-list")
 
 
+def snippet_delete(request, id):
+    snippet = Snippet.objects.get(id=id)
+    snippet.delete()
+    return redirect("snippets-list")
+
+
 def snippets_page(request):
     snippets = Snippet.objects.all()
     context = {
